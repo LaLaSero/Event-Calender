@@ -1,1 +1,4 @@
 icalendar
+requests
+playwright
+openai>=1.14.0

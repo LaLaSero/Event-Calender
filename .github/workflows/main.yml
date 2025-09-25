@@ -1,50 +1,41 @@
 name: Generate and Deploy iCal
 
-# ワークフローが実行されるタイミングを定義
 on:
-  # 1. mainブランチにプッシュされた時
   push:
     branches:
       - main
-  # 2. 手動で実行できるようにする
   workflow_dispatch:
-  # 3. スケジュール実行 (毎月1日の午前9時 JST)
-  # UTCなので '0 0 1 * *' は JSTの午前9時
   schedule:
+    # 毎月1日の00:00 (UTC) に実行 -> 日本時間午前9時
     - cron: '0 0 1 * *'
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      # 1. リポジトリのコードをチェックアウト
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2. Python環境をセットアップ
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # 3. 依存ライブラリをインストール
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      # 4. Pythonスクリプトを実行してiCalファイルを生成
       - name: Generate iCal file
-        run: python generate_ical.py
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: python main.py # 実行するファイルをmain.pyに変更
 
-      # 5. 生成されたファイルをGitHub Pagesにデプロイ
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4
         with:
-          # デプロイに必要なトークン
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          # デプロイするファイルが含まれるディレクトリ
           publish_dir: ./dist
-          # ユーザー情報を設定
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
