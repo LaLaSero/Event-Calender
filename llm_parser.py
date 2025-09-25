@@ -39,7 +39,7 @@ class ParsedEvent:
 
 
 SYSTEM_PROMPT = (
-    "あなたは日本語のイベント情報から年に数回レベルの大型セールイベントを抽出するアシスタントです。もし大型セールが見つからなかったら，それに近しいイベントを一件だけ抽出してください．"
+    "あなたは日本語のイベント情報から年に数回レベルの大型セールイベントを抽出するアシスタントです。ポイント還元キャンペーンなどは無視してください．"
     "入力として与えられるテキストを読み取り、イベント名と開催期間から"
     "ISO8601形式 (YYYY-MM-DD) の開始日と終了日を抽出してください。"
     "終了日はイベント最終日とし、日付が1日しか分からない場合は"
@@ -69,8 +69,13 @@ def _load_client() -> "OpenAI":  # type: ignore[name-defined]
 
 def _normalise_events(payload: Dict[str, object]) -> List[ParsedEvent]:
     events = payload.get("events")
-    if not isinstance(events, list) or not events:
-        raise LLMParserError("LLM 応答に有効な 'events' データが含まれていません。")
+
+    if events is None:
+        # JSON は返ってきたが、抽出対象が無いケースを許容
+        return []
+
+    if not isinstance(events, list):
+        raise LLMParserError("LLM 応答の 'events' フィールドが配列ではありません。")
 
     normalised: List[ParsedEvent] = []
     for raw in events:
@@ -86,35 +91,44 @@ def _normalise_events(payload: Dict[str, object]) -> List[ParsedEvent]:
 
         normalised.append(ParsedEvent(name=name, start_date=start_date, end_date=end_date))
 
-    if not normalised:
-        raise LLMParserError("LLM 応答から有効なイベントを抽出できませんでした。")
-
     return normalised
 
 
-def parse_events_with_llm(event_text: str, *, model: str | None = None, temperature: float = 0.0) -> List[ParsedEvent]:
+def parse_events_with_llm(
+    event_text: str,
+    *,
+    model: str | None = None,
+    temperature: float | None = None,
+) -> List[ParsedEvent]:
     """Send the raw event bulletin text to the LLM and return parsed events."""
 
     if not event_text.strip():
         raise LLMParserError("解析対象のテキストが空です。")
 
     client = _load_client()
-    model_name = model or os.getenv("OPENAI_MODEL", "gpt-4o-mini")
+    model_name = model or os.getenv("OPENAI_MODEL", "gpt-5-nano")
+
+    request_kwargs = {
+        "model": model_name,
+        "response_format": {"type": "json_object"},
+        "messages": [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {
+                "role": "user",
+                "content": (
+                    "以下のテキストから大型セール(premium outlet sale/bargainやblack fridayなど)のイベント情報を抽出してください。大型セールが無い場合は {\"events\": []} だけを返してください\n\n"
+                    + event_text
+                ),
+            },
+        ],
+    }
+
+    if temperature is not None:
+        request_kwargs["temperature"] = temperature
 
     try:
         response = client.chat.completions.create(  # type: ignore[attr-defined]
-            model=model_name,
-            temperature=temperature,
-            response_format={"type": "json_object"},
-            messages=[
-                {"role": "system", "content": SYSTEM_PROMPT},
-                {
-                    "role": "user",
-                    "content": (
-                        "以下のテキストからイベント情報を抽出してください。\n\n" + event_text
-                    ),
-                },
-            ],
+            **request_kwargs
         )
     except Exception as exc:  # pragma: no cover - depends on remote API
         raise LLMParserError(f"LLM API 呼び出しに失敗しました: {exc}") from exc
@@ -124,8 +138,9 @@ def parse_events_with_llm(event_text: str, *, model: str | None = None, temperat
     except Exception as exc:  # pragma: no cover - defensive
         raise LLMParserError("LLM からの応答を取得できませんでした。") from exc
 
-    if not content:
-        raise LLMParserError("LLM が空の応答を返しました。")
+    if not content or not content.strip():
+        # 完全に空の応答は「対象なし」とみなして空リストを返す
+        return []
 
     try:
         payload = json.loads(content)
@@ -152,4 +167,3 @@ def export_events_to_json(event_text: str, output_path: str, *, model: str | Non
         json.dump(events, f, ensure_ascii=False, indent=2)
 
     return events
-
