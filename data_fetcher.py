@@ -1,70 +1,86 @@
 import json
+from typing import List
+
 import requests
 
-def fetch_events_from_api(targets_path):
-    """
-    設定ファイルに基づいてAPIからイベント情報を取得し、
-    LLMに渡すための整形済みテキストを生成する関数。
-    """
-    print("--- APIからイベント情報取得開始 ---")
-    all_events_text = []
-    
+from fetchers import FetchError, BaseFetcher, get_fetcher
+
+
+DEFAULT_FETCHER_NAME = "premium_outlets"
+
+
+def _load_targets(targets_path: str) -> List[dict]:
     try:
-        with open(targets_path, 'r', encoding='utf-8') as f:
-            targets = json.load(f)
+        with open(targets_path, "r", encoding="utf-8") as f:
+            return json.load(f)
     except FileNotFoundError:
         print(f"エラー: 設定ファイル '{targets_path}' が見つかりません。")
+        return []
+
+
+def _build_session() -> requests.Session:
+    session = requests.Session()
+    session.headers.update(
+        {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/91.0.4472.124 Safari/537.36"
+            )
+        }
+    )
+    return session
+
+
+def fetch_events_from_api(targets_path: str) -> str:
+    """設定ファイルをもとに各ターゲットの fetcher を選定し、イベント情報を収集する。"""
+
+    print("--- APIからイベント情報取得開始 ---")
+    targets = _load_targets(targets_path)
+
+    if not targets:
+        print("--- 情報取得完了 ---\n")
         return ""
 
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-    }
-
-    CATEGORY01_NEWS = 10  # プレミアム・アウトレットニュースカテゴリ
-    CATEGORY02_PREMIUM_OUTLETS_NEWS = 200
+    session = _build_session()
+    all_events_text: List[str] = []
 
     for target in targets:
-        api_url = f"https://www.premiumoutlets.co.jp/api/v1/{target['id']}/news"
+        fetcher_name = target.get("fetcher", DEFAULT_FETCHER_NAME)
+        fetcher_cls = get_fetcher(fetcher_name)
+
+        if fetcher_cls is None:
+            name = target.get("name", fetcher_name)
+            error_msg = (
+                f"エラー: [{name}] に対応するフェッチャー '{fetcher_name}' が登録されていません。"
+            )
+            print(error_msg)
+            all_events_text.append(f"--- {name}の情報 ---\n{error_msg}\n")
+            continue
+
+        fetcher: BaseFetcher = fetcher_cls(target, session)
+        target_name = target.get("name", fetcher_name)
+
+        api_url = target.get("api_url")
+        if not api_url and fetcher_name == "premium_outlets":
+            center_id = target.get("id")
+            if center_id:
+                api_url = f"https://www.premiumoutlets.co.jp/api/v1/{center_id}/news"
+
+        if api_url:
+            print(f"[{target_name}] の情報を取得中: {api_url}")
+        else:
+            print(f"[{target_name}] の情報を取得中: fetcher={fetcher_name}")
 
         try:
-            print(f"[{target['name']}] の情報を取得中: {api_url}")
-            response = requests.get(api_url, headers=headers, timeout=15)
-            response.raise_for_status()
-
-            events_data = response.json()
-            news_items = events_data.get('news', []) if isinstance(events_data, dict) else []
-
-            outlet_text = f"--- {target['name']}のイベント情報 ---\n"
-            found_events = False
-
-            for news in news_items:
-                if not isinstance(news, dict):
-                    continue
-
-                if news.get('category01') != CATEGORY01_NEWS:
-                    continue
-
-                if news.get('category02') != CATEGORY02_PREMIUM_OUTLETS_NEWS:
-                    continue
-
-                title = (news.get('title') or '').strip()
-                period = (news.get('schedule') or news.get('period') or '').strip()
-
-                if not title or not period:
-                    continue
-
-                outlet_text += f"イベント名: {title}, 期間: {period}\n"
-                found_events = True
-
-            if not found_events:
-                outlet_text += "現在、対象となるイベント情報はありません。\n"
-
-            all_events_text.append(outlet_text)
-
-        except requests.exceptions.RequestException as e:
-            error_msg = f"エラー: [{target['name']}] のAPIアクセスに失敗しました。: {e}"
+            outlet_text = fetcher.fetch()
+        except FetchError as exc:
+            error_msg = str(exc)
             print(error_msg)
-            all_events_text.append(f"--- {target['name']}の情報 ---\n{error_msg}\n")
-    
+            all_events_text.append(f"--- {target_name}の情報 ---\n{error_msg}\n")
+            continue
+
+        all_events_text.append(outlet_text)
+
     print("--- 情報取得完了 ---\n")
     return "\n".join(all_events_text)

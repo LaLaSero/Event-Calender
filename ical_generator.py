@@ -9,9 +9,9 @@ def create_ical_from_json(json_path, ical_path):
     """
     print("--- iCal生成処理開始 ---")
     cal = Calendar()
-    cal.add('prodid', '-//Premium Outlets Sale Calendar//example.com//')
+    cal.add('prodid', '-//Sale Calendar//example.com//')
     cal.add('version', '2.0')
-    cal.add('X-WR-CALNAME', 'プレミアム・アウトレット セール情報')
+    cal.add('X-WR-CALNAME', 'セール情報')
     cal.add('X-WR-TIMEZONE', 'Asia/Tokyo')
 
     try:

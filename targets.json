@@ -6,5 +6,15 @@
   {
     "name": "土岐プレミアム・アウトレット",
     "id": "toki"
+  },
+  {
+    "name": "ジャズドリーム長島",
+    "fetcher": "html_css",
+    "url": "https://mitsui-shopping-park.com/mop/nagashima/event/",
+    "card_selector": "#event-campaign-list .cont-list.show.current-view li",
+    "title_selector": ".cont-ttl",
+    "period_selector": ".cont-date",
+    "static_period": "期間情報なし",
+    "limit": 10
   }
 ]

@@ -1,23 +1,20 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Premium Outlets Sale Calendar//example.com//
-X-WR-CALNAME:プレミアム・アウトレット セール情報
+PRODID:-//Sale Calendar//example.com//
+X-WR-CALNAME:セール情報
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
-SUMMARY:御殿場プレミアム・アウトレット ポイント還元
- キャンペーンも開催！
-DTSTART;VALUE=DATE:20230917
-DTEND;VALUE=DATE:20231101
-UID:2023-09-17-御殿場プレミアム・アウトレット ポイント
- 還元キャンペーンも開催！@premiumoutlets.example.com
+SUMMARY:ジャズドリーム長島 国慶節セール開催
+DTSTART;VALUE=DATE:20250927
+DTEND;VALUE=DATE:20251020
+UID:2025-09-27-ジャズドリーム長島 国慶節セール開催@premiu
+ moutlets.example.com
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:土岐プレミアム・アウトレット 10月10日はプレミ
- アム・アウトレットの日！記念キャンペーン実施中
-DTSTART;VALUE=DATE:20230917
-DTEND;VALUE=DATE:20231101
-UID:2023-09-17-土岐プレミアム・アウトレット 10月10日はプ
- レミアム・アウトレットの日！記念キャンペーン実施
- 中@premiumoutlets.example.com
+SUMMARY:ジャズドリーム長島 5DAYS SPECIAL AS KNOW AS outlet催事
+DTSTART;VALUE=DATE:20250926
+DTEND;VALUE=DATE:20251001
+UID:2025-09-26-ジャズドリーム長島 5DAYS SPECIAL AS KNOW AS outlet
+ 催事@premiumoutlets.example.com
 END:VEVENT
 END:VCALENDAR
