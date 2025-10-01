@@ -4,27 +4,27 @@ PRODID:-//Sale Calendar//example.com//
 X-WR-CALNAME:セール情報
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
-SUMMARY:ジャズドリーム長島 国慶節セール開催！
+SUMMARY:ジャズドリーム長島 国慶節セール開催！（9/27-10/
+ 19）
 DTSTART;VALUE=DATE:20250927
 DTEND;VALUE=DATE:20251020
-UID:2025-09-27-ジャズドリーム長島 国慶節セール開催！@pre
- miumoutlets.example.com
+UID:2025-09-27-ジャズドリーム長島 国慶節セール開催！（9
+ /27-10/19）@premiumoutlets.example.com
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:ジャズドリーム長島 5DAYS SPECIAL AS KNOW AS outlet催事 
+SUMMARY:土岐プレミアム・アウトレット 秋の寝具フェア
  開催！
-DTSTART;VALUE=DATE:20250926
-DTEND;VALUE=DATE:20251001
-UID:2025-09-26-ジャズドリーム長島 5DAYS SPECIAL AS KNOW AS outlet
- 催事 開催！@premiumoutlets.example.com
+DTSTART;VALUE=DATE:20251004
+DTEND;VALUE=DATE:20251006
+UID:2025-10-04-土岐プレミアム・アウトレット 秋の寝具フ
+ ェア開催！@premiumoutlets.example.com
 END:VEVENT
 BEGIN:VEVENT
-SUMMARY:ジャズドリーム長島 花咲かタイムズ秋の大感謝
- 祭inららぽーと・ジャズドリーム長島
-DTSTART;VALUE=DATE:20251018
-DTEND;VALUE=DATE:20251020
-UID:2025-10-18-ジャズドリーム長島 花咲かタイムズ秋の大
- 感謝祭inららぽーと・ジャズドリーム長島@premiumoutlets.ex
- ample.com
+SUMMARY:ジャズドリーム長島 PUMA OUTLETのオトクな6日間 開
+ 催！
+DTSTART;VALUE=DATE:20251008
+DTEND;VALUE=DATE:20251014
+UID:2025-10-08-ジャズドリーム長島 PUMA OUTLETのオトクな6日
+ 間 開催！@premiumoutlets.example.com
 END:VEVENT
 END:VCALENDAR
