@@ -4,10 +4,10 @@ PRODID:-//Sale Calendar//example.com//
 X-WR-CALNAME:セール情報
 X-WR-TIMEZONE:Asia/Tokyo
 BEGIN:VEVENT
-SUMMARY:土岐プレミアム・アウトレット Christmas Collection
-DTSTART;VALUE=DATE:20251201
-DTEND;VALUE=DATE:20251226
-UID:2025-12-01-土岐プレミアム・アウトレット Christmas Collec
- tion@premiumoutlets.example.com
+SUMMARY:ジャズドリーム長島 SUPER OUTLET SALE
+DTSTART;VALUE=DATE:20251226
+DTEND;VALUE=DATE:20260119
+UID:2025-12-26-ジャズドリーム長島 SUPER OUTLET SALE@premiumoutlet
+ s.example.com
 END:VEVENT
 END:VCALENDAR
