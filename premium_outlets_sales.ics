@@ -3,4 +3,47 @@ VERSION:2.0
 PRODID:-//Sale Calendar//example.com//
 X-WR-CALNAME:セール情報
 X-WR-TIMEZONE:Asia/Tokyo
+BEGIN:VEVENT
+SUMMARY:御殿場プレミアム・アウトレット Bonaventura / スペ
+ シャルプロモーションのご案内
+DTSTART;VALUE=DATE:20260427
+DTEND;VALUE=DATE:20260511
+UID:2026-04-27-御殿場プレミアム・アウトレット Bonaventura /
+  スペシャルプロモーションのご案内@premiumoutlets.example.c
+ om
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:土岐プレミアム・アウトレット Spring Gourmet Fair
+DTSTART;VALUE=DATE:20260313
+DTEND;VALUE=DATE:20260507
+UID:2026-03-13-土岐プレミアム・アウトレット Spring Gourmet F
+ air@premiumoutlets.example.com
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:ジャズドリーム長島 GWは高速道路でおトクにショ
+ ッピング！ 「ハイウェイショッピングキャンペーン」
+ 開催！
+DTSTART;VALUE=DATE:20260424
+DTEND;VALUE=DATE:20260511
+UID:2026-04-24-ジャズドリーム長島 GWは高速道路でおトク
+ にショッピング！ 「ハイウェイショッピングキャンペ
+ ーン」開催！@premiumoutlets.example.com
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:ジャズドリーム長島 2施設以上をめぐっておトク
+ に！W特典キャンペーン
+DTSTART;VALUE=DATE:20260502
+DTEND;VALUE=DATE:20260525
+UID:2026-05-02-ジャズドリーム長島 2施設以上をめぐってお
+ トクに！W特典キャンペーン@premiumoutlets.example.com
+END:VEVENT
+BEGIN:VEVENT
+SUMMARY:ジャズドリーム長島 豪華賞品が当たる！ 東海エ
+ リア限定 おかいものdeキャンペーン 第1弾
+DTSTART;VALUE=DATE:20260429
+DTEND;VALUE=DATE:20260701
+UID:2026-04-29-ジャズドリーム長島 豪華賞品が当たる！ 東
+ 海エリア限定 おかいものdeキャンペーン 第1弾@premiumoutl
+ ets.example.com
+END:VEVENT
 END:VCALENDAR
